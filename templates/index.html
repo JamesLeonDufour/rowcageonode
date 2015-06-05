@@ -1,0 +1,192 @@
+{% extends "site_base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load base_tags %}
+
+{% block title %} {% trans "Welcome!" %} - {{ block.super }} {% endblock %}
+
+{% block body_class %}home{% endblock %}
+
+{% block middle %}
+   {{ block.super }}
+  {% block hero %}
+
+<style>
+  /* Carousel base class */
+  .carousel {
+    margin-bottom: 0px;
+    margin-top: 0px;
+  }
+  .carousel .container {
+    position: relative;
+    z-index: 9;
+  }
+  .carousel-control {
+    background-color: transparent;
+    border: 0;
+    font-size: 8em;
+    height: 0px;
+    margin-top: 60px;
+    text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    z-index: 10;
+  }
+    .carousel .item {
+      height: 350px;
+    }
+    .carousel img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      min-height: 350px;
+      min-width: 100%;
+      overflow: hidden;
+    }
+
+    .carousel-caption {
+      background: none;
+      position: static;
+      padding: 0;
+      margin-top: 80px;
+     // width: 600px;
+    }
+    .carousel-caption h1 {
+      color: #fff;
+      font-size: 3em;
+      line-height: 0.2em;
+      margin: 0;
+      padding: 20px 0;
+      text-shadow: 2px 2px 2px rgba(0,0,0,.4);
+    }
+    .carousel-caption .lead {
+      color: #fff;
+      font-weight: 400;
+      line-height: 1.125em;
+      padding: 20px 0;
+      text-shadow: 2px 2px 2px rgba(0,0,0,.4);
+    }
+
+    </style>
+
+
+<!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide">
+      <div class="carousel-inner">
+        <div class="item active">
+          <img src="/static/geonode/img/backimagecc.jpg" alt="">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>{% trans "Welcome to the " %}<strong>OCHA</strong> Rowca GeoNode</h1>
+              <p class="lead">{% trans "COD FOD registry for West and Central Africa" %}</p>
+              <span>To contribute data, create groups and maps, you will need a user account: <a href='mailto:geonode@ocharowca.info?subject=OCHA ROWCA GeoNode - Account Request'>Request Account by Email</p></span>
+               <a class="btn btn-large btn-danger" href="/layers/">Explore Layers</a>            </div>
+          </div>
+        </div>
+        <div class="item">
+  		<img src="/static/geonode/img/4.jpg" alt="">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Create a Map</h1>
+              <p class="lead">OCHA GeoNode enables you to compose and share maps. </br>
+		Create a map with our cartography tool, or explore maps shared by others.</p>
+              <div class="btns">
+                <a href="/maps/new" class="btn btn-large btn-primary">Create a Map</a>
+          
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+		<img src="/static/geonode/img/1.jpg" alt="">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>{% trans "Geospatial data sharing platform" %}</h1>
+              <p class="lead">{% trans "OCHA GeoNode enables you to upload, manage, and browse data layers." %}</br>
+		{% trans "Search for data that is valuable to you, or upload your own data to share it with others." %}</p>
+              <div class="btns">
+		<a class="btn btn-large btn-primary" href="http://docs.geonode.org/en/latest/tutorials/users/quickstart/index.html">Need Help ?</a>
+        
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+    </div><!-- /.carousel -->
+  {% endblock %}
+
+  {% block mainbody %}
+  <div class="container">
+    <div class="row home-facets">
+    {% with facet_type='home' %}
+     {% facets as facets %}
+      <div class="col-md-4">
+        <p><a href="{% url "layer_browse" %}"><i class="fa fa-square-o fa-5x rotate-45"></i></a></p>
+        <h2><a href="{% url "layer_browse" %}">{{ facets.layer|default:_("No") }} {% blocktrans count counter=facets.layer %}Layer{% plural %}Layers{% endblocktrans %}</a></h2>
+        <p>{% trans "Click to search for geospatial data published by other users, organizations and public sources. Download data in standard formats." %}</p> 
+        {% if user.is_authenticated %}
+        <p class="text-center"><a class="btn btn-default" href="{% url "layer_upload" %}" role="button">{% trans "Add layers" %} &raquo;</a></p>
+        {% else %}
+        <p class="text-center"><a class="btn btn-default" href="{% url "layer_browse" %}" role="button">{% trans "Explore layers" %} &raquo;</a></p>        
+        {% endif %}
+      </div>
+      <div class="col-md-4">
+        <p><a href="{% url "maps_browse" %}"><i class="fa fa-map-marker fa-5x"></i></a></p>
+        <h2><a href="{% url "maps_browse" %}">{{ facets.map|default:_("No") }} {% blocktrans count counter=facets.map %}Map{% plural %}Maps{% endblocktrans %}</a></h2>
+        <p>{% trans "Data is available for browsing, aggregating and styling to generate maps which can be shared publicly or restricted to specific users only." %}</p>
+        {% if user.is_authenticated %}
+        <p><a class="btn btn-default" href="{% url "new_map" %}" role="button">{% trans "Create maps" %} &raquo;</a></p>
+        {% else %}
+        <p><a class="btn btn-default" href="{% url "maps_browse" %}" role="button">{% trans "Explore maps" %} &raquo;</a></p>
+        {% endif %}
+      </div>
+      <div class="col-md-4">
+        <p><a href="{% url "profile_browse" %}"><i class="fa fa-user fa-5x"></i></a></p>
+        <h2><a href="{% url "profile_browse" %}">{{ facets.user|default:_("No") }} {% blocktrans count counter=facets.user %}User{% plural %}Users{% endblocktrans %}</a></h2>
+        <p>{% trans "GeoNode allows registered users to easily upload geospatial data in several formats including shapefile and GeoTiff." %}</p>
+        <p><a class="btn btn-default" href="{% url "profile_browse" %}" role="button">{% trans "See users" %} &raquo;</a></p>
+      </div>
+    {% endwith %}
+    </div>
+  </div>
+  {% verbatim %}
+  <div ng-app="featured">
+    <div ng-repeat="item in featured">
+      <!--{{ item.title }}-->
+    </div>
+  </div>
+  {% endverbatim %}
+  {% endblock %}
+  
+{% endblock %}
+
+{% block extra_script %}
+{% if DEBUG_STATIC %}
+<script src="{{ STATIC_URL }}lib/js/angular.js"></script>
+{% endif %}
+  <script type="text/javascript">
+    FEATURED_URL = '{% url 'api_dispatch_list' api_name='api' resource_name='featured' %}'
+    'use strict';
+    (function(){  
+      var module = angular.module('featured', []);
+      module.run(function($http, $rootScope){
+        $http.get(FEATURED_URL).success(function(data){
+          $rootScope.featured = data.objects;
+        });
+      });
+    })(); 
+  </script>
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-59969184-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+{% endblock extra_script %}
